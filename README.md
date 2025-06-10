@@ -1,37 +1,80 @@
-# AI-Powered-Notepad-with-Hand-Gesture-Recognition-
-A modern notepad built with HTML, CSS, JavaScript, MediaPipe, and TensorFlow that lets users interact using hand gestures — including "Hello", "Goodbye", "Thank You", and "I Love You". 💡✨
+# Minimalist Web Notepad
 
-# AI-Powered Notepad with Hand Gesture Recognition ✋📝
+This is an open-source clone of the now-defunct notepad.cc: "a piece of paper in the cloud".
 
-This project is a futuristic notepad application that combines voice recognition, text-to-speech, dark mode, tabbed editing, and *AI-powered hand gesture recognition* using the MediaPipe Hands solution.
+See demo at https://notes.orga.cat or https://notes.orga.cat/whatever.
 
-## 💡 Features
+## Installation
 
-- 🎤 **Voice Typing** (Speech-to-text using Web Speech API)
-- 🔊 **Read Aloud** (Text-to-speech using SpeechSynthesis)
-- 🌙 **Dark/Light Mode Toggle**
-- 📑 **Multiple Tabs for Notes**
-- 🤖 **Hand Gesture Detection** (via webcam + MediaPipe)
-- ✋ **Recognizes These Gestures:**
-  - 👋 Hello (5 fingers)
-  - 👋 Goodbye (0 fingers)
-  - 🙏 Thank You (2 fingers)
-  - 🤟 I Love You (3 fingers)
+Make sure the web server is allowed to write to the `_tmp` directory.
 
-## 📸 Tech Stack
+### On Apache
 
-- HTML5
-- CSS3
-- JavaScript (Vanilla)
-- [MediaPipe Hands](https://google.github.io/mediapipe/solutions/hands)
-- [TensorFlow.js](https://www.tensorflow.org/js)
+You may need to enable mod_rewrite and allow `.htaccess` files in your site configuration.
+See [How To Set Up mod_rewrite for Apache](https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite-for-apache-on-ubuntu-14-04).
 
-## 📽️ Demo
+### On Nginx
 
-> Add a screen recording or link here once deployed!
+To enable URL rewriting, put something like this in your configuration file:
 
-## 🛠️ How to Use
+If the project resides in the root directory:
+```
+location / {
+    rewrite ^/([a-zA-Z0-9_-]+)$ /index.php?note=$1;
+}
+```
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/YOUR-USERNAME/ai-powered-notepad.git
+If the project resides in a subdirectory:
+```
+location ~* ^/notes/([a-zA-Z0-9_-]+)$ {
+    try_files $uri /notes/index.php?note=$1;
+}
+```
+
+If parameters need to be passed in Nginx (such as `?raw`), then `&$args` needs to be added to the end of the `$1` match:
+```
+location ~* ^/notes/([a-zA-Z0-9_-]+)$ {
+    try_files $uri /notes/index.php?note=$1&$args;
+}
+```
+
+## Usage (CLI)
+
+Using the command-line interface you can both save and retrieve notes. Here are some examples using `curl`:
+
+Retrieve a note's content and save it to a local file:
+
+```
+curl https://example.com/notes/test > test.txt
+```
+
+Save specific text to a note:
+
+```
+curl https://example.com/notes/test -d 'hello,
+
+welcome to my pad!
+'
+```
+
+Save the content of a local file (e.g., `/etc/hosts`) to a note:
+
+```
+cat /etc/hosts | curl https://example.com/notes/hosts --data-binary @-
+```
+
+## Copyright and license
+
+Copyright 2012 Pere Orga <pere@orga.cat>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this work except in compliance with the License.
+You may obtain a copy of the License at:
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
